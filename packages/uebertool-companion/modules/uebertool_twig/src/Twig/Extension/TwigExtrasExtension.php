@@ -3,6 +3,8 @@
 namespace Drupal\uebertool_twig\Twig\Extension;
 
 use Drupal\Component\Utility\Html;
+use Drupal\Component\Uuid\Uuid;
+use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\ByteSizeMarkup;
@@ -19,8 +21,10 @@ use Symfony\Component\Yaml\Yaml;
  */
 class TwigExtrasExtension extends AbstractExtension {
 
-  public function __construct(protected RendererInterface $renderer) {
-  }
+  public function __construct(
+    protected RendererInterface $renderer,
+    protected UuidInterface $uuid,
+  ) { }
 
   /**
    * {@inheritdoc}
@@ -50,6 +54,7 @@ class TwigExtrasExtension extends AbstractExtension {
       new TwigFunction('HTML', [$this, 'HTML']),
       new TwigFunction('class', [$this, 'classList']),
       new TwigFunction('tailwind_config', [$this, 'tailwindConfig']),
+      new TwigFunction('uuid', [$this, 'uuid']),
     ];
   }
 
@@ -400,6 +405,15 @@ class TwigExtrasExtension extends AbstractExtension {
     $attribute = new Attribute();
     $attribute->addClass($classes);
     return $attribute;
+  }
+
+  /**
+   * Generates a Universally Unique IDentifier (UUID).
+   *
+   * @return string
+   */
+  public function uuid() : string {
+    return $this->uuid->generate();
   }
 
   /**
