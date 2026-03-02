@@ -3,18 +3,18 @@
 namespace Drupal\uebertool_twig\Twig\Extension;
 
 use Drupal\Component\Utility\Html;
-use Drupal\Component\Uuid\Uuid;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\ByteSizeMarkup;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Template\Attribute;
+use Drupal\Core\Theme\ThemeManagerInterface;
 use Drupal\Core\Url;
+use Symfony\Component\Yaml\Yaml;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Provides field value filters for Twig templates.
@@ -24,6 +24,7 @@ class TwigExtrasExtension extends AbstractExtension {
   public function __construct(
     protected RendererInterface $renderer,
     protected UuidInterface $uuid,
+    protected ThemeManagerInterface $themeManager,
   ) { }
 
   /**
@@ -375,11 +376,11 @@ class TwigExtrasExtension extends AbstractExtension {
    * Return a Drupal URL object.
    *
    * @param string $url
-   * @return static
+   * @return \Drupal\Core\Url
    *   A new Url object based on user input.
    */
   public function urlFromUserInput(string $url, array $options = []) {
-    return \Drupal\Core\Url::fromUserInput($url, $options);
+    return Url::fromUserInput($url, $options);
   }
 
   /**
@@ -423,9 +424,7 @@ class TwigExtrasExtension extends AbstractExtension {
    * @return mixed
    */
   public function tailwindConfig(?string $key) {
-    /** @var Drupal\Core\Theme\ThemeManager */
-    $theme_manager = \Drupal::service('theme.manager');
-    $theme = $theme_manager->getActiveTheme();
+    $theme = $this->themeManager->getActiveTheme();
 
     try {
       $uebertool_dist_theme = current(array_filter($theme->getBaseThemeExtensions(), function($theme) {
