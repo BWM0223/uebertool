@@ -13,7 +13,7 @@ class PageHooks {
     $page['#attached']['html_head'][] = [
       [
         '#tag' => 'style',
-        '#value' => '@layer properties, theme, base, drupal, components, utilities;',
+        '#value' => '@layer properties, theme, base, drupal, components, components-custom, utilities;',
       ],
       'uebertool_companion_layer',
     ];
