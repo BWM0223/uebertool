@@ -1,6 +1,6 @@
 {
   "name": "@ueberbit/tailwind",
-  "version": "0.7.8",
+  "version": "0.8.0",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
