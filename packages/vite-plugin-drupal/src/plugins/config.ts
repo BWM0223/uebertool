@@ -5,6 +5,12 @@ import process from 'node:process'
 import { glob } from 'tinyglobby'
 import { mergeConfig } from 'vite'
 
+const VUE_RUNTIME_REGEX = /@vue\+runtime/
+const ALPINEJS_REGEX = /alpinejs@/
+const FONT_REGEX = /.woff2?$/
+const CSS_REGEX = /\.css$/
+const JS_REGEX = /.(ts|js|tsx|jsx|vue)$/
+
 export default (ctx: Context): Plugin => {
   const assetMap = new Map<string, string>()
 
@@ -53,24 +59,24 @@ export default (ctx: Context): Plugin => {
             input,
             output: {
               manualChunks: (id: string) => {
-                if (id.match(/@vue\+runtime/))
+                if (VUE_RUNTIME_REGEX.test(id))
                   return 'vue.runtime.esm-browser.prod'
 
-                if (id.match(/alpinejs@/))
+                if (ALPINEJS_REGEX.test(id))
                   return 'alpine.runtime'
               },
               assetFileNames: (assetInfo: any) => {
-                const base = basename(assetInfo.name)
-                let dir = dirname(assetInfo.name)
+                const base = basename(assetInfo.name || assetInfo.names[0])
+                let dir = dirname(assetInfo.name || assetInfo.names[0])
 
-                if (base.match(/.(woff2?)$/))
+                if (FONT_REGEX.test(base))
                   return '[name].[ext]'
 
                 if (assetMap.has(base))
                   return assetMap.get(base)
 
                 const fullPath = input.find(file => file.endsWith(base))
-                  || input.find(file => file.endsWith(base.replace(/\.css$/, '.scss')))
+                  || input.find(file => file.endsWith(base.replace(CSS_REGEX, '.scss')))
 
                 if (fullPath)
                   dir = dirname(fullPath)
@@ -81,7 +87,7 @@ export default (ctx: Context): Plugin => {
                 return '[name].[hash].[ext]'
               },
               entryFileNames: (assetInfo: any) => {
-                if (assetInfo.facadeModuleId?.match(/.(ts|js|tsx|jsx|vue)$/)) {
+                if (assetInfo.facadeModuleId?.match(JS_REGEX)) {
                   const base = dirname(relative('./', assetInfo.facadeModuleId))
                   return `${base}/[name].[hash].js`
                 }

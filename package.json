@@ -29,13 +29,17 @@
   "devDependencies": {
     "@ueberbit/eslint-config": "workspace:*",
     "@ueberbit/stylelint-config": "workspace:*",
-    "bumpp": "^10.1.1",
-    "typescript": "^5.7.2",
-    "unbuild": "^3.5.0"
+    "bumpp": "^11.0.1",
+    "typescript": "^6.0.2",
+    "unbuild": "^3.6.1"
   },
   "pnpm": {
     "overrides": {
-      "typescript": "^5.7.2"
-    }
+      "typescript": "^5.9.3"
+    },
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "esbuild"
+    ]
   }
 }
